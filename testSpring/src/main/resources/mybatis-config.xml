@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="org.kh.test.board.model.vo.Board" alias="b"/>
+		<typeAlias type="org.kh.test.board.model.vo.Options" alias="o"/>
+		<typeAlias type="org.kh.test.board.model.vo.SearchOption" alias="s"/>
+		<typeAlias type="org.kh.test.member.model.vo.Member" alias="m"/>
+		<typeAlias type="org.kh.test.board.model.vo.Qna" alias="q"/>
+		<typeAlias type="org.kh.test.board.model.vo.AdminQ" alias="a"/>
+		<typeAlias type="org.kh.test.board.model.vo.WishList" alias ="w"/>
+		<typeAlias type="org.kh.test.report.model.vo.Report" alias="r"/>
+		<typeAlias type="org.kh.test.member.model.vo.BuyPoint" alias="bp"/>
+		<typeAlias type="org.kh.test.member.model.vo.Message" alias="ms"/>
+		<typeAlias type="org.kh.test.board.model.vo.Comment" alias="c"/>
+	</typeAliases>
+</configuration>

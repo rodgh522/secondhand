@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="board">
+
+	<insert id="insertBoard" parameterType="b">
+		INSERT INTO BOARD VALUES
+		<choose>
+			<when test="boardNo >1">
+				(#{boardNo}, #{category}, #{title},
+				#{content}, #{userId},
+				#{price},
+				#{phone}, #{sellerType}, #{location}, 0, #{possess},
+				#{grade},'n' ,#{categoryM},
+				#{regDate} )
+			</when>
+			<otherwise>
+				(BOARD_SEQ.NEXTVAL, #{category}, #{title},
+				#{content}, #{userId},
+				#{price},
+				#{phone}, #{sellerType}, #{location}, 0, #{possess},
+				#{grade},'n' ,#{categoryM},
+				SYSDATE)
+			</otherwise>
+		</choose>
+	</insert>
+
+	<insert id="insertOptions" parameterType="b">
+		<choose>
+			<when test="boardNo >1">
+				<foreach collection="options" item="option"
+					open="insert All" separator=" " close="select * from dual">
+					INTO OPTIONS(OPTION_NO, BOARD_NO, CATEGORIE,
+					OPTION_NAME, OPTION_VALUE)
+					VALUES(FUNC_OPTION_SEQ(), #{boardNo},
+					#{category}, #{option.optionName},
+					#{option.optionValue} )
+				</foreach>
+			</when>
+			<otherwise>
+				<foreach collection="options" item="option"
+					open="insert All" separator=" " close="select * from dual">
+					INTO OPTIONS(OPTION_NO, BOARD_NO, CATEGORIE,
+					OPTION_NAME, OPTION_VALUE)
+					VALUES(FUNC_OPTION_SEQ(), (SELECT BOARD_NO
+					FROM(SELECT ROWNUM AS NUM,
+					BOARD_NO FROM BOARD ORDER BY REG_DATE DESC)
+					WHERE ROWNUM = 1),
+					#{category}, #{option.optionName},
+					#{option.optionValue} )
+				</foreach>
+			</otherwise>
+		</choose>
+	</insert>
+
+	<insert id="insertPhotos" parameterType="b">
+		<choose>
+			<when test="boardNo == 0 and files.size() != 0">
+				<foreach collection="files" item="photo" open="insert all"
+					separator=" " close="select * from dual">
+					INTO PHOTO VALUES((SELECT BOARD_NO FROM(SELECT
+					ROWNUM AS NUM, BOARD_NO
+					FROM BOARD ORDER BY REG_DATE DESC) WHERE
+					ROWNUM = 1),
+					#{photo})
+				</foreach>
+			</when>
+			<when test="boardNo >1">
+				<foreach collection="files" item="photo" open="insert all"
+					separator=" " close="select * from dual">
+					INTO PHOTO VALUES(#{boardNo},
+					#{photo})
+				</foreach>
+			</when>
+			<otherwise>
+				insert into photo values((SELECT BOARD_NO FROM(SELECT
+				ROWNUM AS NUM, BOARD_NO
+				FROM BOARD ORDER BY REG_DATE DESC) WHERE
+				ROWNUM = 1), 'nothing')
+			</otherwise>
+		</choose>
+	</insert>
+
+	<select id="searchList" parameterType="b" resultType="b">
+
+		select
+		board_no as boardNo,
+		categorie as category,
+		board_title as title,
+		board_content as content,
+		member_id as userId,
+		reg_date as regDate,
+		price as price,
+		phone as phone,
+		sellerType as sellerType,
+		seller_location as location,
+		readcount as readCount,
+		possessPeriod as
+		possess,
+		board_grade as grade,
+		category_M as categoryM
+		from board
+
+		<choose>
+			<when test="categoryM != null">
+				where category_M = #{categoryM }
+			</when>
+			<when test="category != null">
+				where categorie = #{category}
+			</when>
+		</choose>
+		<if test="boardNo > 1">
+			where board_no = #{boardNo }
+		</if>
+	</select>
+
+	<update id="readcount" parameterType="b">
+		update board
+		set readcount = #{readCount}
+		where board_no = #{boardNo}
+	</update>
+
+	<select id="searching" parameterType="s" resultType="b">
+
+		select
+		board_no as boardNo,
+		categorie as category,
+		board_title as title,
+		board_content as content,
+		member_id as userId,
+		reg_date as regDate,
+		price as price,
+		phone as phone,
+		sellerType as sellerType,
+		seller_location as location,
+		readcount as readCount,
+		possessPeriod as
+		possess,
+		board_grade as grade
+		from board
+
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<choose>
+				<when test="categoryM != null and categoryM != ''">
+					category_M = #{categoryM }
+				</when>
+				<when test="category != null and category != ''">
+					categorie = #{category}
+				</when>
+				<otherwise>
+
+				</otherwise>
+			</choose>
+			<if test="location != '' and location != null"> and seller_location 
+				like '%' || #{location } || '%' </if> 
+			<if test="text != '' and text != null">
+				and (board_title like '%' || #{text } || '%' or
+				board_content like '%' || #{text } || '%')
+			</if>
+			<choose>
+				<when test="minP>0 and maxP==0">
+					and price between #{minP} and 9999999999
+				</when>
+				<when test="minP==0 and maxP>0">
+					and PRICE BETWEEN 0 and #{maxP}
+				</when>
+				<when test="minP>0 and maxP>0">
+					and price between #{minP} and #{maxP}
+				</when>
+				<otherwise>
+
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+
+	<delete id="deleteBoard" parameterType="b">
+		delete from board where
+		board_no=#{boardNo}
+	</delete>
+
+	<select id="searchPhoto" parameterType="_int"
+		resultType="string">
+		select files from photo where board_no = #{boardNo}
+	</select>
+
+	<select id="searchOption" parameterType="_int" resultType="o">
+		select
+		option_name as optionName,
+		option_value as optionValue
+		from
+		options where board_no = #{boardNo}
+	</select>
+
+	<delete id="deleteColumn" parameterType="b">
+		delete from board where
+		board_no =#{boardNo}
+	</delete>
+
+	<delete id="deletePhoto" parameterType="b">
+		delete from photo where
+		board_no =#{boardNo}
+	</delete>
+
+	<delete id="deleteOption" parameterType="b">
+		delete from options
+		where board_no =#{boardNo}
+	</delete>
+
+	<insert id="insertQna" parameterType="q">
+		insert into qna(q_No,
+		memberId, q_Pw, q_Title, q_Content, reg_date) values(
+		qna_seq.nextval,
+		#{memberId},
+		#{qPw},
+		#{qTitle},
+		#{qContent},
+		sysdate
+		)
+	</insert>
+
+	<select id="totalcount" resultType="_int">
+		select count(*)as totalCount
+		from Qna
+	</select>
+
+	<select id="qnaList" parameterType="map" resultType="q">
+		select *
+		from
+		(select rownum as num, q.*
+		from
+		(select
+		q_no as qNo,
+		q_title as
+		qTitle,
+		q_content as qContent,
+		memberId as memberId,
+		q_pw as qPw,
+		q_answer as qanswer,
+		reg_date as regDate
+		from qna order by q_no desc)q
+		)
+		where num between #{start} and #{end}
+	</select>
+
+	<select id="qnaOne" parameterType="_int" resultType="q">
+		select
+		q_no
+		as qNo,
+		q_title as qTitle,
+		memberid as memberId,
+		q_content as qContent,
+		reg_date as reaDate,
+		q_answer as qanswer
+		from qna where q_no =#{qNo}
+	</select>
+
+	<select id="qnaPassCheck" parameterType="map" resultType="_int">
+		select
+		count(*)as checkPass
+		from qna
+		where q_pw=#{qPw} and q_No=#{qNo}
+	</select>
+
+	<update id="qnaUpdate" parameterType="q">
+		update qna set
+		q_Title
+		=#{qTitle},
+		q_content =#{qContent}
+		where q_no =#{qNo}
+	</update>
+
+	<delete id="qnaDelete" parameterType="_int">
+		delete from qna where
+		q_no=#{qNo}
+	</delete>
+
+	<update id="answerup" parameterType="q">
+		update qna set
+		q_answer
+		=#{qanswer}
+		where q_no =#{qNo}
+	</update>
+
+	<select id="searchBoardList"
+		parameterType="org.kh.test.board.model.vo.Search" resultType="q">
+		SELECT * FROM
+		(SELECT ROWNUM AS NUM, q.*
+		FROM
+		(SELECT
+		q_no as qNo,
+		q_title
+		as qTitle,
+		memberid as memberId,
+		q_content as qContent,
+		reg_date as
+		regDate,
+		q_answer as qanswer
+		from qna
+
+		<if test="select.equals('title')">
+			WHERE q_title LIKE '%'||#{keyword}||'%'
+		</if>
+		<if test="select.equals('memberId')">
+			WHERE MEMBERID LIKE '%'||#{keyword}||'%'
+		</if>
+
+		ORDER BY qNo DESC)q
+		)
+		WHERE NUM BETWEEN #{start} AND #{end}
+	</select>
+
+	<select id="searchBoardCnt"
+		parameterType="org.kh.test.board.model.vo.Search" resultType="_int">
+		SELECT
+		COUNT(*)
+		FROM qna
+		<choose>
+			<when test="select.equals('title')">
+				WHERE q_title LIKE '%'||#{keyword}||'%'
+			</when>
+			<when test="select.equals('memberId')">
+				WHERE MEMBERID LIKE '%'||#{keyword}||'%'
+			</when>
+		</choose>
+	</select>
+
+	<insert id="adminQ" parameterType="a">
+		insert into adminQ(ad_no,
+		question, answer) values(
+		adminQ_seq.nextval,
+		#{question},
+		#{answer}
+		)
+	</insert>
+
+	<select id="adminList" resultType="a">
+		select
+		ad_no as adNo,
+		question
+		as question,
+		answer as answer
+		from adminQ
+	</select>
+
+	<delete id="adminDel" parameterType="a">
+		delete from adminQ where
+		ad_no=#{adNo}
+	</delete>
+
+	<update id="adminUp" parameterType="a">
+		update adminq set
+		question
+		=#{question},
+		answer =#{answer}
+		where ad_no =#{adNo}
+	</update>
+
+	<select id="selectHistory" parameterType="b" resultType="b">
+
+		select
+		board_no as boardNo ,
+		board_title as title ,
+		seller_location as
+		location
+		from
+		board
+		<if test="cookieList != null">
+			<foreach open="where board_no in (" collection="cookieList"
+				item="cookieNo" close=")" separator=",">
+				#{cookieNo}
+			</foreach>
+		</if>
+		<if test="cookieList = null">
+			where board_no = 999999999999999999999999999999
+		</if>
+	</select>
+
+	<select id="selectHistoryFile" parameterType="String"
+		resultType="String">
+		select
+		files
+		from
+		photo
+		where
+		board_no = #{boardNo}
+	</select>
+
+
+
+	<insert id="insertheart" parameterType="w">
+		insert into
+		wishlist
+		values(
+		#{regBoardNo} , #{memberId} , sysdate
+		)
+	</insert>
+
+	<select id="wishList" parameterType="map" resultType="w">
+		select
+		reg_board_no as regBoardNo ,
+		reg_member_id as memberId
+		from
+		wishlist
+		where
+		reg_board_no = #{boardNo} and reg_member_id = #{memberId}
+	</select>
+
+	<delete id="deleteheart" parameterType="w">
+		delete from
+		wishlist
+		where
+		reg_board_no = #{regBoardNo}
+	</delete>
+
+
+
+	<select id="arrayWish" parameterType="String" resultType="w">
+		select
+		reg_member_id as memberId ,
+		reg_board_no as regBoardNo ,
+		heart_date as
+		heartDate
+		from
+		wishlist
+		where
+		reg_member_id = #{memberId}
+	</select>
+
+	<select id="heartList" parameterType="w" resultType="b">
+		select
+		seller_location as location ,
+		board_title as title,
+		board_no as boardNo,
+		heart_date as heartDate ,
+		reg_member_id as memberId
+		from
+		board join
+		wishlist on board.board_no = wishlist.reg_board_no
+		where
+		reg_member_id =
+		#{memberId} and reg_board_no = #{regBoardNo}
+		order by
+		heart_date
+	</select>
+
+	<select id="heartFileList" parameterType="_int"
+		resultType="String">
+		select
+		files
+		from
+		photo
+		where
+		board_no = #{boardNo}
+	</select>
+
+
+	<select id="selectHeartList" parameterType="String"
+		resultType="_int">
+		select
+		reg_board_no
+		from
+		wishlist
+		where
+		reg_member_id =
+		#{memberId}
+	</select>
+
+	<select id="selectHeartBoardList" parameterType="_int"
+		resultType="b">
+		select
+		board_no as boardNo ,
+		board_title as title ,
+		SELLER_LOCATION as location
+		from
+		board
+		where
+		board_no = #{boardNo}
+	</select>
+
+	<select id="selectBoardAjax" parameterType="w" resultType="b">
+		select
+		board_no as boardNo ,
+		board_title as title ,
+		seller_location as
+		location
+		from
+		board
+		where
+		board_no = #{regBoardNo}
+
+	</select>
+
+	<update id="updateMoney" parameterType="m">
+		update member set
+		mileage=#{mileage} where member_id = #{memberId}
+	</update>
+
+	<select id="selectOne" parameterType="m" resultType="m">
+		SELECT
+		MEMBER_ID AS memberId,
+		Member_pw as memberPw,
+		member_name as memberName,
+		member_addr as memberAddr,
+		phone as phone,
+		reg_date as regDate,
+		evaluation as evaluation,
+		mileage as mileage,
+		wishlist as wishList
+		from member
+		where member_id=#{memberId }
+	</select>
+
+
+	<insert id="insertComment" parameterType="c">
+		insert into
+		comment_board
+		values(
+		comment_seq.nextval ,
+		#{regBoardNo},
+		#{commentTitle} ,
+		#{commentContent},
+		#{commentId},
+		null,
+		null,
+		null,
+		#{score},
+		null
+		)
+	</insert>
+
+	<select id="listComment" parameterType="_int" resultType="c">
+		select
+		comment_no as commentNo,
+		reg_board_no as regBoardNo,
+		comment_title as commentTitle,
+		comment_content as commentContent,
+		comment_id as commentId,
+		score as score
+		from
+		comment_board
+		where
+		reg_board_no = #{boardNo}
+	</select>
+
+	<update id="updateComment" parameterType="c">
+		update
+		comment_board
+		set
+		comment_title = #{commentTitle} ,
+		comment_content = #{commentContent}
+		where
+		comment_no = #{commentNo}
+	</update>
+
+	<delete id="delteComment" parameterType="c">
+		delete from
+		comment_board
+		where
+		comment_no = #{commentNo}
+	</delete>
+
+	<update id="insertRecomment" parameterType="c">
+		update
+		comment_board
+		set
+		re_comment_no = re_comment_seq.nextval ,
+		reg_comment_no = #{regCommentNo} ,
+		re_comment_content = #{recommentContent} ,
+		re_comment_id = #{reCommentId}
+		where
+		comment_no = #{regCommentNo}
+	</update>
+
+	<select id="selectRecomment1" parameterType="_int"
+		resultType="c">
+		select
+		re_comment_no as reCommentNo,
+		re_comment_content as recommentContent ,
+		re_comment_id as reCommentId ,
+		reg_comment_no as regCommentNo ,
+		comment_no as commentNo
+		from
+		comment_board
+		where
+		reg_comment_no = #{commentNo}
+	</select>
+
+	<update id="delteRecomment" parameterType="c">
+		update
+		comment_board
+		set
+		re_comment_no = null ,
+		reg_comment_no = null ,
+		re_comment_content = null ,
+		re_comment_id = null
+		where
+		comment_no = #{commentNo}
+	</update>
+
+</mapper>

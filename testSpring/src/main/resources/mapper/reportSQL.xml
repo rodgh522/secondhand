@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="report">
+	<insert id="insertReportBoard" parameterType="r">
+	insert into report values(
+	 REPORT_NO_SEQ.NEXTVAL, #{categorie},#{memberId},#{reason},#{reportTaget},default,#{reportBoardNo},#{title},sysdate
+	)
+	</insert>
+	
+	<select id="selectReportList" parameterType="r" resultType="r">
+		select 
+			report_no as reportNo,
+			categorie as categorie,
+			member_id as memberId,
+			reason as reason,
+			report_target as reportTaget,
+			ongoing as onGoing,
+			report_board_no as reportBoardNo,
+			title as title,
+			report_date as reportDate
+		from report order by 1 desc	
+	</select>
+	<update id="updateReportComplete" parameterType="_int">
+	update report set
+		ongoing = 'Y'
+		where report_no=#{complete}
+	</update>	
+	<delete id="reportDelete" parameterType="_int">
+	delete from report where report_board_no =#{reportBoardNo}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+   <!-- 아이콘 사용 링크 -->
+    <script src="https://kit.fontawesome.com/47a97bc968.js" crossorigin="anonymous"></script>
+     <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<title></title>
+    <style>
+        body {
+            margin: 0;
+        }
+        header{
+            background-color: #36263b;
+            height: 90px;
+            position: relative;
+        }
+        .body {
+            background-color : #f4f4f4;
+            height: 700px
+        }
+        footer {
+            background-color: #36263b;
+            height: 150px;
+        }
+        .container {
+            width:400px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            margin: 46px 0 40px 90px;
+            line-height: 50px;
+            font-size: 35px;
+            display: block;
+            font-weight: 400;
+            
+        }
+        
+        .btn-outline-success {
+            width: 370px;
+            margin-top: 5px;
+            padding: 15px 30px;
+        }
+        ul {
+            list-style: none;
+            width: 370px;
+            box-shadow : 1;
+            padding: 0;
+            box-shadow: 1px 1px 5px grey;
+        }
+        li button{
+            position: relative;
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            background-color: #fff;
+            font-size: 14px;
+            padding : 0 15px;
+            box-sizing: border-box;
+            color: #3baa33;
+            border: none;
+            border-bottom: 1px solid #d6d6d6;
+            text-align: left;
+        }
+        li:hover .category-text{
+            color : #a6a6a6;
+        }
+        .category-big {
+            display: none;
+        }
+        .logo {
+            display: inline-block;
+            width: 150px;
+            position: relative;
+            top : 15%;
+            left : 10%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="/"><span><img src="/resources/photo/logo-white.svg" alt=""></span></a></div>
+    </header>
+    <div class="body">
+        <div class="container">
+            <div><h1>게시글 등록</h1></div>
+            <selection>
+                <span>카테고리 선택</span><hr>
+                <div>
+                <button class="btn btn-outline-success category" value="c"><span class="fas fa-car">&nbsp;</span><span class="category-text">자동차 </span></button>
+                <button class="btn btn-outline-success category" value="p"><span class="fas fa-mobile-alt">&nbsp;</span><span class="category-text">핸드폰/카메라 </span></button>
+                <button class="btn btn-outline-success category" value="n"><span class="fas fa-laptop">&nbsp;</span><span class="category-text">컴퓨터/노트북 </span></button>
+                <button class="btn btn-outline-success category" value="f"><span class="fas fa-couch">&nbsp;</span><span class="category-text">가구/가전 </span></button>
+                <button class="btn btn-outline-success category" value="l"><span class="fas fa-tshirt">&nbsp;</span><span class="category-text">의류 </span></button>
+                <button class="btn btn-outline-success category" value="e"><span class="fab fa-earlybirds">&nbsp;</span><span class="category-text">기타 </span></button>
+                </div>
+            </selection>
+            <input type="hidden" id="category-b">
+        </div>
+        <div class="category-big">
+           
+            <div id="phonecam">
+            <ul>
+                <li><button class="category-m" value="phone">핸드폰</button></li>
+                <li><button class="category-m" value="cam">카메라</button></li>
+            </ul>
+            </div>
+            <div id="computer">
+            <ul>
+                <li><button class="category-m">컴퓨터</button></li>
+                <li><button class="category-m">노트북</button></li>
+            </ul>
+            </div>
+            <div id="furniture">
+            <ul>
+                <li><button class="category-m" value="furniture">가구</button></li>
+                <li><button class="category-m" value="appliance">가전</button></li>
+            </ul>
+            </div>
+            <div id="cloth">
+            </div>
+            <div class="category-md">
+                <div id="phone">
+                <ul>
+                    <li><button>삼성</button></li>
+                    <li><button>애플</button></li>
+                    <li><button>소니</button></li>
+                </ul>
+                </div>
+                <div id="camera">
+                <ul>
+                    <li><button>DSLR</button></li>
+                    <li><button>Mirro Less</button></li>
+                </ul>
+                </div>
+            </div>
+        </div> 
+        
+    </div>
+    <footer>
+        
+    </footer>
+      <script>
+          function categoryB(index){
+              var html = '';
+              switch(index) {
+                  case 'c' : location.href="/p-post2.do?category=자동차";
+                      break;
+                  case 'p' : html = $('#phonecam').html();
+                      break;
+                  case 'n' : location.href="p-post2.do?category=컴퓨터";
+                      break;
+                  case 'f' : html = $('#furniture').html();
+                      break;
+                  case 'l' : location.href="p-post2.do?category=의류";
+                      break;
+                  case 'e' : location.href="/p-post2.do?category=기타";
+              }
+              return html;
+          }
+          function categoryM(index) {
+              var url = "/p-post2.do?category=";
+              switch(index) {
+                      case 'phone' : location.href=url +"핸드폰/카메라&categoryM=핸드폰";
+                      break;
+                      case 'cam' : location.href= url+ "핸드폰/카메라&categoryM=카메라";
+                      break;
+                      case 'furniture' : location.href= url+ "가구/가전&categoryM=가구";
+                      break;
+                      case 'appliance' : location.href= url+ "가구/가전&categoryM=가전";
+                      break;
+                      
+              }
+          
+          }
+        $(document).on('click', '.category', function() {
+            $('selection div').html('<div><ul class="choosen"><li><button class="cancel">'+$(this).html()+'<span class="fas fa-times" style="display:block; float:right; line-height:50px;"></span></button></li></ul></div><hr>' + categoryB($(this).val()));
+            $('#category-b').val($(this).val());
+        });
+          
+        $(document).on('click', '.category-m', function () {
+            categoryM($(this).val());
+        });
+          
+        $(document).on('click', '.cancel', function() {
+              $('selection div').html('<button class="btn btn-outline-success category" value="c"><span class="fas fa-car">&nbsp;</span><span class="category-text">자동차 </span></button><button class="btn btn-outline-success category" value="p"><span class="fas fa-mobile-alt">&nbsp;</span><span class="category-text">핸드폰/카메라 </span></button><button class="btn btn-outline-success category" value="n"><span class="fas fa-laptop">&nbsp;</span><span class="category-text">컴퓨터/노트북 </span></button><button class="btn btn-outline-success category" value="f"><span class="fas fa-couch">&nbsp;</span><span class="category-text">가구/가전 </span></button><button class="btn btn-outline-success category" value="l"><span class="fas fa-tshirt">&nbsp;</span><span class="category-text">의류 </span></button><button class="btn btn-outline-success category" value="e"><span class="fab fa-earlybirds">&nbsp;</span><span class="category-text">기타 </span></button>');
+          });
+          
+    </script>
+</body>
+</html>

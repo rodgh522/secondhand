@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="member">
+
+	<insert id="insertMember" parameterType="m">
+		insert into member values(#{memberId}, #{memberPw}, #{memberName}, #{memberAddr}, #{phone}, sysdate, 0, 0, 'n')
+	</insert>
+	
+	<select id="allMember" resultType="m">
+		SELECT 
+			MEMBER_ID AS memberId,
+			Member_pw as memberPw,
+			member_name as memberName,
+			member_addr as memberAddr,
+			phone as phone,
+			reg_date as regDate,
+			evaluation as evaluation,
+			mileage as mileage,
+			wishlist as wishList
+		from member
+	</select>
+	
+	<select id="login" parameterType="m" resultType="m">
+		SELECT 
+			MEMBER_ID AS memberId,
+			Member_pw as memberPw,
+			member_name as memberName,
+			member_addr as memberAddr,
+			phone as phone,
+			reg_date as regDate,
+			evaluation as evaluation,
+			mileage as mileage,
+			wishlist as wishList
+		from member where member_Id=#{memberId } and member_pw = #{memberPw}
+	</select>
+	
+	<select id="memberList" parameterType="m" resultType="m">
+		SELECT 
+			MEMBER_ID AS memberId,
+			Member_pw as memberPw,
+			member_name as memberName,
+			member_addr as memberAddr,
+			phone as phone,
+			reg_date as regDate,
+			evaluation as evaluation,
+			mileage as mileage,
+			wishlist as wishList
+		from member order by 1 desc
+	</select>
+	<delete id="memberDelete" parameterType="m">
+		delete from member 
+		where member_id=#{memberId }
+	</delete>
+	
+		
+	<update id="updateMember" parameterType="m">
+		UPDATE MEMBER SET
+			member_pw = #{memberPw},
+			member_name = #{memberName},
+			member_addr = #{memberAddr},
+			phone = #{phone}
+		WHERE MEMBER_ID = #{memberId }
+	</update>
+	
+	<select id="selectOne" parameterType="m" resultType="m">
+		SELECT 
+			MEMBER_ID AS memberId,
+			Member_pw as memberPw,
+			member_name as memberName,
+			member_addr as memberAddr,
+			phone as phone,
+			reg_date as regDate,
+			evaluation as evaluation,
+			mileage as mileage,
+			wishlist as wishList
+		from member 
+		where member_id=#{memberId }
+	</select>
+	
+	<update id="updatePoint" parameterType="bp">
+		update member set
+			mileage = #{subData}
+		where member_id = #{memberId}
+	</update>
+	
+	<select id="myBoardList" parameterType="m" resultType="b">
+		select
+		board_no as boardNo,
+		categorie as category,
+		board_title as title,
+		board_content as content,
+		member_id as userId,
+		reg_date as regDate,
+		price as price,
+		phone as phone,
+		sellerType as sellerType,
+		seller_location as location,
+		readcount as readCount,
+		possessPeriod as
+		possess,
+		board_grade as grade
+		from board
+		where member_id = #{memberId}
+	</select>
+	
+	<select id="myReportList" parameterType="m" resultType="r">
+		select 
+			report_no as reportNo,
+			categorie as categorie,
+			member_id as memberId,
+			reason as reason,
+			report_target as reportTaget,
+			ongoing as onGoing,
+			report_board_no as reportBoardNo,
+			title as title,
+			report_date as reportDate
+		from report
+		where member_id = #{memberId}
+	</select>
+	
+	<delete id="deleteMyReport" parameterType="r">
+		delete from report where report_no =#{reportNo}
+	</delete>
+	
+	<select id="selectMyWishList" parameterType="m" resultType="w">
+		select 
+			reg_board_no as regBoardNo,
+			reg_member_id as memberId
+		from wishlist
+		where reg_member_id = #{memberId}
+	</select>
+	
+	<select id="selectMyBoardWishList" parameterType="Integer" resultType="b">
+		select
+		board_no as boardNo,
+		categorie as category,
+		board_title as title,
+		board_content as content,
+		member_id as userId,
+		reg_date as regDate,
+		price as price,
+		phone as phone,
+		sellerType as sellerType,
+		seller_location as location,
+		readcount as readCount,
+		possessPeriod as
+		possess,
+		board_grade as grade
+		from board
+		where board_no = #{regBoardNo} 
+	</select>
+	
+	<select id ="heartFileList" parameterType="_int" resultType="String">
+		select
+			files
+		from 
+			photo
+		where
+			board_no = #{boardNo}
+	</select>
+	
+	
+	<insert id="sendMessage" parameterType="ms">
+		insert into message values(message_seq.nextval,#{sender},#{receiver},#{content},SYSDATE,DEFAULT)
+		
+	</insert>
+	
+	<select id="totalCount" parameterType="m" resultType="_int">
+		select count(message_no) from message where receiver = #{memberId}
+	</select>
+	
+	<select id="newCount" parameterType="m" resultType="_int">
+		select count(case when read='N' then 1 end) from message where receiver = #{memberId}
+	</select>
+	
+	<select id="oldCount" parameterType="m" resultType="_int">
+		select count(case when read='Y' then 1 end) from message where receiver = #{memberId}
+	</select>
+	
+	<select id="sendCount" parameterType="m" resultType="_int">
+		select count(message_no) from message where sender = #{memberId}
+	</select>
+	
+	
+	<select id="newMessage" parameterType="m" resultType="ms">
+		select
+			message_no as messageNo,
+			sender as sender,
+			receiver as receiver,
+			content as content,
+			sender_date as senderDate,
+			read as read
+		from message
+		where receiver = #{memberId}	
+	</select>
+	
+	
+	<select id="endMessage" parameterType="m" resultType="ms">
+		select
+			message_no as messageNo,
+			sender as sender,
+			receiver as receiver,
+			content as content,
+			sender_date as senderDate,
+			read as read
+		from message
+		where sender = #{memberId}
+	</select>
+	
+	<delete id="msDelete" parameterType="_int">
+		delete from message where message_no=#{messageNo}
+	</delete>
+	
+	<select id="msRead" parameterType="_int" resultType="ms">
+		select
+			message_no as messageNo,
+			sender as sender,
+			receiver as receiver,
+			content as content,
+			sender_date as senderDate,
+			read as read
+		from message
+		where message_no = #{messageNo}
+	</select>
+	
+	<update id="updateRead" parameterType="_int">
+		update message 
+			set read = 'Y'
+		where message_no = #{messageNo}
+	</update>
+	
+	<select id="emailCheck" parameterType="m" resultType="_int">
+		SELECT 
+			count(*)
+		from member
+		where member_id=#{_parameter}
+	</select>
+	
+	<insert id="firstMessage" parameterType="m">
+		insert into message values(message_seq.nextval, 'admin', #{memberId}, '회원가입 축하 메시지입니다. 회원가입을 축하합니다 :>수료도 축하합니다~ 고생많았어요 다들 :>', sysdate, DEFAULT)
+	</insert>
+	
+</mapper>
